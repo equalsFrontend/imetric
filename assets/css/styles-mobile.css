@@ -1,0 +1,63 @@
+#swipe {
+	display: block !important;
+	bottom: 40px !important;
+	background-size: 50px;
+}
+.home-title-container img {
+	width: 140px;
+}
+.portrait-social-sharing {
+	background: rgba(0,0,0,0.8);
+	padding: 10px 0px;
+	bottom: -84px;
+}
+#rotate-tablet {
+	display: none !important;
+}
+#rotate-mobile {
+	display: block;
+}
+.journey:hover .journey-play-button, .journey:hover .journey-paused {
+	opacity:0;
+	filter: alpha(opacity=0);
+}
+.layout-maya .portrait-name-container {
+	left: 50% !important;
+	margin-left: -200px !important;
+}
+.layout-maya .portrait-info-container {
+	left: 50%;
+	margin-left: -290px;
+}
+.layout-haifa .portrait-name-container {
+	left: 58px;
+}
+.layout-haifa .portrait-info-container {
+	left: 107px;
+}
+.layout-furati .portrait-name-container {
+	left: 90px;
+}
+.layout-furati .portrait-info-container {
+	left: 120px;
+}
+.layout-omar .portrait-name-container {
+	left: 20px;
+}
+.layout-omar .portrait-info-container {
+	left: 80px;	
+}
+.layout-hajj .portrait-name-container {
+	left: 50px;
+}
+.layout-hajj .portrait-info-container {
+	left: 110px;
+}
+#intro-vid {
+	display:none;
+}
+.home-background-video {
+	background-image: url('../assets/img/mobile_intro_bg.jpg');
+	background-size: cover;
+	background-repeat: none;
+}

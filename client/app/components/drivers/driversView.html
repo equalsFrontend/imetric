@@ -1,0 +1,46 @@
+<div ng-controller="DriversControllers" class="data-view drivers-data-view-container">
+	<highchart id="driversChart" config="driverChartConfig"></highchart>
+	
+	<div class="drivers-panel">
+		<div class="driver" ng-repeat="driver in driverProfiles">
+			<div class="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+		    	 <div class="well profile">
+		            <div class="col-sm-12">
+		                <div class="col-xs-12 col-sm-8">
+		                    <h2>{{driver.name}}</h2>
+		                    <p><strong>Location: </strong> {{driver.location}} </p>
+		                    <p><strong>Vehicle: </strong> {{driver.vehicle}} </p>
+		                    <p><strong>Grade: </strong> {{driver.grade}} </p>
+		                    
+		                </div>             
+		                <div class="col-xs-12 col-sm-4 text-center">
+		                    <figure>
+		                        <img src="http://www.localcrimenews.com/wp-content/uploads/2013/07/default-user-icon-profile.png" alt="" class="img-circle img-responsive">
+		                        <figcaption class="ratings">
+		                        </figcaption>
+		                    </figure>
+		                </div>
+		            </div>            
+		            <div class="col-xs-12 divider text-center">
+		                <div class="col-xs-12 col-sm-3 emphasis">
+		                    <h2><strong> {{driver.accelerations}} </strong></h2>                    
+		                    <p><small>Accelerations</small></p>
+		                </div>
+		                <div class="col-xs-12 col-sm-3 emphasis">
+		                    <h2><strong>{{driver.decelerations}}</strong></h2>                    
+		                    <p><small>Decelerations</small></p>
+		                </div>
+		                <div class="col-xs-12 col-sm-3 emphasis">
+		                    <h2><strong>{{driver.stops}}</strong></h2>                    
+		                    <p><small>Stops</small></p>
+		                </div>
+		                <div class="col-xs-12 col-sm-3 emphasis">
+		                    <h2><strong>{{driver.steadys}}</strong></h2>                    
+		                    <p><small>Steadys</small></p>
+		                </div>
+		            </div>
+		    	 </div>                 
+			</div>
+		</div>
+	</div>
+</div>

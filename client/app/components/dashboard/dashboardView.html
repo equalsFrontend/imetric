@@ -1,0 +1,27 @@
+<div class="dashboard" ng-controller="DashboardController">
+
+	<nav>
+	  <ul id="main-nav" class="nav nav-pills">
+	    <li role="presentation"  class="btn-default" ng-class="{ active: $state.includes('dashboard.notifications') }">
+	    	<a ui-sref=".notifications"><span class="glyphicon glyphicon-asterisk"></span>  Notifications</a>
+	    </li>
+	    <li role="presentation" class="btn-default" ng-class="{ active: $state.includes('dashboard.drivers') }">
+	    	<a ui-sref=".drivers"><span class="glyphicon glyphicon-user"></span>  Drivers</a>
+	    </li>
+	    <li role="presentation" class="btn-default"  ng-class="{ active: $state.includes('dashboard.map') }">
+	    	<a ui-sref=".map"><span class="glyphicon glyphicon-map-marker"></span>  Risk Mapping</a>
+	    </li>
+	    <li role="presentation" class="btn-default" ng-class="{ active: $state.includes('dashboard.stats') }">
+	    	<a ui-sref=".stats"><span class="glyphicon glyphicon-stats"></span>  Overview</a>
+	    </li>
+	    <li role="presentation" id="logout">
+	    	<a ui-sref="login" class="btn-default btn-sm" ng-click="logout()"><span class="glyphicon glyphicon-remove"></span>  Logout</a>
+	    </li>
+	  </ul>
+	</nav>	
+	
+	<div class="data-container" ui-view="main.data"></div>
+  	
+  	<div class="notifications-container" ui-view="main.notifications"></div>
+  
+</div>

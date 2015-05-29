@@ -1,0 +1,42 @@
+toolbar {
+	bottom: 22px !important;
+}
+#intro-vid {
+	height: 100% !important;
+}
+.cinema-vid video {
+	zoom: 5;
+	display:none;
+}
+.portrait-name-container {
+	margin-left: 80px;
+}
+.portrait-info-container {
+	margin-left: 80px !important;
+}
+#swipe {
+	display: block !important;
+}
+.portrait-social-sharing {
+	background: rgba(0,0,0,0.8);
+	padding: 10px 0px;
+	bottom: -84px;
+}
+#rotate-tablet {
+	display: block;
+}
+#rotate-mobile {
+	display: none !important;
+}
+.journey:hover .journey-play-button, .journey:hover .journey-paused {
+	opacity:0;
+	filter: alpha(opacity=0);
+}
+#intro-vid {
+	display:none;
+}
+.home-background-video {
+	background-image: url('../assets/img/mobile_intro_bg.jpg');
+	background-size: cover;
+	background-repeat: none;
+}

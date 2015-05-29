@@ -1,0 +1,106 @@
+{
+  "drivers" : {
+    "driver012" : {
+      "grade" : "A",
+      "location" : "Montreal, Quebec",
+      "name" : "John Dsoe",
+      "vehicle" : "Honda CRV"
+    },
+    "driver305" : {
+      "grade" : "C",
+      "location" : "Montreal, Quebec",
+      "name" : "Jane Doe",
+      "vehicle" : "Mazda Miata"
+    },
+    "driver500" : {
+      "grade" : "B",
+      "location" : "Montreal, Quebec",
+      "name" : "Alfred Nobel",
+      "vehicle" : "Volkswagen Beatle"
+    }
+  },
+  "stats" : {
+    "acceleration" : [ {
+      "date" : "2014-01-01 22:33:48",
+      "driver" : "driver012",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 22:33:48",
+      "driver" : "driver012",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 22:33:48",
+      "driver" : "driver012",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    } ],
+    "braking" : [ {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 23:35:30",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 05:05:03",
+      "driver" : "driver012",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 05:05:03",
+      "driver" : "driver012",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    }, {
+      "date" : "2014-01-01 05:05:03",
+      "driver" : "driver012",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    } ],
+    "steady" : [ {
+      "dateFrom" : "2015-01-01 05:05:03",
+      "dateTo" : "2015-01-01 05:07:00",
+      "driver" : "driver305",
+      "latitudeFrom" : 45.5535759,
+      "latitudeTo" : 45.56418499999999,
+      "longitudeFrom" : -73.55107079999999,
+      "longitudeTo" : -73.55107079999999
+    } ],
+    "stops" : [ {
+      "date" : "2014-01-01 05:05:03",
+      "driver" : "driver305",
+      "latitude" : 45.5691135,
+      "longitude" : -73.56634930000001
+    } ]
+  }
+}

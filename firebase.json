@@ -1,0 +1,9 @@
+{
+  "firebase": "blistering-heat-5543",
+  "public": ".",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}
