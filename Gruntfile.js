@@ -109,8 +109,15 @@ module.exports = function (grunt) {
 	  'concat'
 	]);
 	
+	grunt.registerTask('build', [
+      'jshint',
+      'concat',
+      'uglify',
+      'jsdoc'
+    ]);
+	
 	//the 'build' task lints, tests, concats, tests, minifies, tests and then builds the docs
-	grunt.registerTask('build',
+	grunt.registerTask('build-test',
 	[
 	  'jshint',
 	  'karma:development',

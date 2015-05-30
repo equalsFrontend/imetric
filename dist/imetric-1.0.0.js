@@ -43,8 +43,10 @@
 	.constant("PATHS", (function(){
 		
 		var appPath = "client/app/";
-				
-		//appPath = "../client/app/";
+		
+		if(dist){
+			appPath = "../client/app/";
+		}
 		
 		return {
 			FIREBASE : "https://blistering-heat-5543.firebaseio.com",
