@@ -99,7 +99,7 @@ module.exports = function (grunt) {
 			}
 		}
 	});
-
+	
 	//the 'test' task is used to run the unit tests
 	grunt.registerTask('test', ['karma:development']);
 	

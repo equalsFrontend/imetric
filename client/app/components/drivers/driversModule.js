@@ -53,6 +53,8 @@
 		        }
 			},
 	  
+			//this is what gets updated on entry & with push
+			//and in turn redraws the chart
 			series: [],
 	  
 			title: {
@@ -238,6 +240,7 @@
 		    EVENTS.EVENT_STOP_ADDED,
 		    EVENTS.EVENT_STEADY_ADDED
 		], function(event, args){
+			console.log("accel added!!!");
 			$scope.addDriverEvent(args.category, args.data);
 		});
 		
@@ -257,8 +260,8 @@
 		
 		//when the controller is initialized we must first run through the driver 
 		//event list to build the initial reports, afterwards is real time
-		for(var e in DriverEventRelayService.model){
-			var event = DriverEventRelayService.model[e];
+		for(var e in DriverEventRelayService.storage){
+			var event = DriverEventRelayService.storage[e];
 			
 			if(event.category == "drivers"){
 				$scope.addDriver(event.category, event.data);

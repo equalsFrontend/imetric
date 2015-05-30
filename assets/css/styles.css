@@ -474,8 +474,21 @@ nav .btn-default, nav .active {
 	position: relative;
 	display: block;
 	overflow: hidden;
+	opacity: 0;
+	
+	-webkit-transition: opacity 0.5s ease-in-out;
+	-moz-transition: opacity 0.5s ease-in-out;
+	-o-transition: opacity 0.5s ease-in-out;
+	transition: opacity 0.5s ease-in-out;
 }
 
+.notification.visible {
+	opacity: 1;
+}
+
+.notifications-data-view-container .notification {
+	opacity: 1;
+}
 .notification p {
 	max-width: 80%;
 	margin: auto;
@@ -486,11 +499,13 @@ nav .btn-default, nav .active {
 	cursor: pointer;
 }
 
-#notification-close {
+.notification-close {
   float: right;
   position: absolute;
   top: 0px;
   right: 5px;
+  padding: 10px;
+  cursor: pointer;
 }
 
 .highlight-off {
@@ -530,8 +545,5 @@ nav .btn-default, nav .active {
 	.notification {
 		margin-left: 4%;
 		width: 92%;
-	}
-	#notification-close {
-		padding: 10px;
 	}
 }

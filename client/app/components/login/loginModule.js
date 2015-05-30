@@ -45,7 +45,7 @@
 					$state.go('loading');
 				}, 300);
 				
-				console.log("User " + authData.uid + " is logged in with " + authData.provider);
+				$rootScope.currentUser = authData.uid;
 				
 			} else {
 				

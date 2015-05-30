@@ -27,24 +27,27 @@
 	         * @fires $rootScope.$broadcast()
 	         */
 			relay: function(event, details){
-				
-				console.log("driver service relay event " + event);
-				
-				var uniqueId = details.category + details.key;
-				
-				var eventObj = {
+								
+				var uniqueId = details.category + details.key,
+					
+					eventObj = {
 					category: details.category,
 					data: details.data
 				};
 				
-				if(!this.model.hasOwnProperty(uniqueId)){
-					this.model[uniqueId] = eventObj;
+				if(!this.storage.hasOwnProperty(uniqueId)){
+					this.storage[uniqueId] = eventObj;
 				}
 				
 				$rootScope.$broadcast(event, eventObj);			
 			},
 			
-			model: {}
+			/**
+ 	         * @property {object} DriverEventRelayService.storage - Storage of all driver events in the session
+ 	         * @memberof DriversServices
+ 	         * @author Alex Boisselle
+ 	         */
+			storage: {}
 		};
 	}]);
 })();

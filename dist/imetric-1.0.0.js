@@ -358,7 +358,6 @@
 		    }
 	    };
 	}]);
-	
 })();
 /*jshint -W099*/
 /**
@@ -386,6 +385,7 @@
 	                                    'LoginService',
 	                                    'PreloaderService',
 	                                    'DriverEventRelayService',
+	                                    'NotificationRelayService',
 	                                    'PATHS',
 	                                    'EVENTS',
 	                                    function($scope, 
@@ -393,6 +393,7 @@
 	                                    		 LoginService,
 	                                    		 PreloaderService,
 	     	                                     DriverEventRelayService,
+	     	                                     NotificationRelayService,
 	                                    		 PATHS,
 	                                    		 EVENTS){
 		
@@ -407,6 +408,8 @@
          * @memberof DashboardControllers
          */
 		$scope.data = PreloaderService.data;
+		
+		$scope.currentUser = $rootScope.currentUser;
 		
 		/**
          * @function DashboardControllers.logout 
@@ -467,7 +470,7 @@
 		
 		//accel tracked
 		accQuery.on("child_added", function(snapshot){
-			
+						
 			var event = {
 				key: snapshot.key(),
 				category: 'accelerations',
@@ -482,6 +485,8 @@
 			 * @param {object} statDriverId - driver id
 			 */
 			DriverEventRelayService.relay(EVENTS.EVENT_ACCEL_ADDED, event);
+			
+			NotificationRelayService.relay(EVENTS.EVENT_ACCEL_ADDED, event);
 		});
 		
 		//accel removed
@@ -626,7 +631,6 @@
                                     	       $rootScope,
                                     		   PATHS){
 		
-
 		var map, pointarray, heatmap;
 		
 		/**
@@ -920,6 +924,8 @@
 		        }
 			},
 	  
+			//this is what gets updated on entry & with push
+			//and in turn redraws the chart
 			series: [],
 	  
 			title: {
@@ -1105,6 +1111,7 @@
 		    EVENTS.EVENT_STOP_ADDED,
 		    EVENTS.EVENT_STEADY_ADDED
 		], function(event, args){
+			console.log("accel added!!!");
 			$scope.addDriverEvent(args.category, args.data);
 		});
 		
@@ -1124,8 +1131,8 @@
 		
 		//when the controller is initialized we must first run through the driver 
 		//event list to build the initial reports, afterwards is real time
-		for(var e in DriverEventRelayService.model){
-			var event = DriverEventRelayService.model[e];
+		for(var e in DriverEventRelayService.storage){
+			var event = DriverEventRelayService.storage[e];
 			
 			if(event.category == "drivers"){
 				$scope.addDriver(event.category, event.data);
@@ -1165,24 +1172,27 @@
 	         * @fires $rootScope.$broadcast()
 	         */
 			relay: function(event, details){
-				
-				console.log("driver service relay event " + event);
-				
-				var uniqueId = details.category + details.key;
-				
-				var eventObj = {
+								
+				var uniqueId = details.category + details.key,
+					
+					eventObj = {
 					category: details.category,
 					data: details.data
 				};
 				
-				if(!this.model.hasOwnProperty(uniqueId)){
-					this.model[uniqueId] = eventObj;
+				if(!this.storage.hasOwnProperty(uniqueId)){
+					this.storage[uniqueId] = eventObj;
 				}
 				
 				$rootScope.$broadcast(event, eventObj);			
 			},
 			
-			model: {}
+			/**
+ 	         * @property {object} DriverEventRelayService.storage - Storage of all driver events in the session
+ 	         * @memberof DriversServices
+ 	         * @author Alex Boisselle
+ 	         */
+			storage: {}
 		};
 	}]);
 })();
@@ -1248,7 +1258,7 @@
 					$state.go('loading');
 				}, 300);
 				
-				console.log("User " + authData.uid + " is logged in with " + authData.provider);
+				$rootScope.currentUser = authData.uid;
 				
 			} else {
 				
@@ -1381,7 +1391,33 @@
 
 	"use strict";
 	
-	var notificationsDirectives = angular.module('iMetric.components.notifications.directives', []);
+	var notificationsDirectives = angular.module('iMetric.components.notifications.directives', [])
+
+	.directive('notification', ['$rootScope', 
+	                            'PATHS', function($rootScope, 
+	                            				  PATHS) {
+		
+		var dir = {};
+		
+		dir.restrict = "E";
+		
+		dir.templateUrl = PATHS.NOTIFICATIONS + 'notification.html';
+		
+		dir.link = function(scope, element){
+			console.log(element);
+			
+			var closeButton = element[0].querySelector('.notification-close');
+			
+			$(element).addClass('visible');
+			
+			$(closeButton).on('click', function(){
+				
+				$(element[0]).hide("fast");
+			});
+		};
+		
+		return dir;
+	}]);
 	
 })();
 /*jshint -W099*/
@@ -1401,45 +1437,44 @@
 	    'iMetric.components.notifications.services'
 	])
 	
-	.controller('NotificationsViewController', ['$scope', 
-	                                            '$rootScope', 
-	                                            function($scope, 
-	                                            		 $rootScope){
-		
-		$scope.greeting = "Notification view";
-		
-		$scope.closeNotification = function(event){
-			var el = event.target,
-				container = $($($(el).parent()).parent())[0],
-				containerId = container.id;
+	//this controller is for controller the scope
+	.controller('NotificationsController', ['$scope', 
+	                                        '$rootScope', 
+	                                        'NotificationRelayService',
+	                                         function($scope, 
+	                                        		  $rootScope,
+	                                        		  NotificationRelayService){
+				
+		/*$scope.$on("NOTIFY-" + EVENTS.EVENT_ACCEL_ADDED, function(event, args){
+
 			
-			$('#' + containerId).hide("fast");
-		};
-		
-		$scope.$on('newNotification', function(){
-			console.log("View Controller: New Notification");
-		});
+			
+		});*/
 		
 	}])
 	
-	.controller('NotificationController', ['$scope', 
+	//view specific methods & properties
+	.controller('NotificationsViewController', ['$scope', 
 	                                            '$rootScope', 
+	                                            'NotificationRelayService',
 	                                            function($scope, 
-	                                            		 $rootScope){
+	                                            		 $rootScope,
+	                                            		 NotificationRelayService){
 		
-		$scope.greeting = "Notification popup";
+		$scope.storage = NotificationRelayService.storage;
 		
-		$scope.closeNotification = function(event){
-			var el = event.target,
-				container = $($($(el).parent()).parent())[0],
-				containerId = container.id;
-		
-			$('#' + containerId).hide("fast");
-		};
-		
-		$scope.$on('newNotification', function(){
-			console.log("View Controller: New Notification");
-		});
+	}])
+	
+	//popup specific methods and properties
+	.controller('NotificationPopupController', ['$scope', 
+	                                            '$rootScope', 
+	                                            'NotificationRelayService',
+	                                            function($scope, 
+	                                            		 $rootScope,
+	                                            		 NotificationRelayService){
+
+		$scope.queue = NotificationRelayService.queue;
+				
 	}]);
 	
 })();
@@ -1447,7 +1482,7 @@
 /**
  * Notifications Services
  * @module /components/notifications/notificationsServices
- * @namespace NotificationsService
+ * @namespace NotificationsServices
  * @author Alex Boisselle
  * @date May 2015
  */
@@ -1458,32 +1493,113 @@
 	
 	var notificationsServices = angular.module('iMetric.components.notifications.services', [])
 	
-	.factory('NotificationsService', ['$q', 
-	                                 '$rootScope', 
-	                                 function($q,
-	                                		  $rootScope){
-		return {
+	.factory('NotificationRelayService', ['$rootScope', 
+	                                      '$state',
+	                                      function($rootScope,
+	                                    		   $state){
+	     		
+ 		return {
+ 			
+ 			/**
+ 	         * @function NotificationRelayService.relay 
+ 	         * @memberof NotificationsServices
+ 	         * @param {string} event - the title of the event (stored in constants)
+ 	         * @param {object} details - contains the key of the event, the event category and the event data
+ 	         * @author Alex Boisselle
+ 	         * @description transforms event for the controller to augment the DOM
+ 	         * @fires $rootScope.$broadcast()
+ 	         */
+ 			relay: function(event, details){
+ 				
+ 				console.log("notification relay service event " + event);
+ 				
+ 				var state = $state.current,
+ 					uniqueId = details.category + details.key,
+ 					_this = this,
+ 					
+ 					eventObj = {
+ 					id: uniqueId,
+ 					category: details.category,
+ 					data: details.data
+ 				};
+ 				
+ 				//if this event is not stored, store it
+ 				if(!this.storage.hasOwnProperty(uniqueId)){
+ 					this.storage[uniqueId] = eventObj;
+ 				}
+ 				
+ 				//if queue does not already hold this event
+ 				//add it, and after 2 seconds remove it
+ 				if(!this.queue.hasOwnProperty(uniqueId) && state.name.indexOf('notifications') < 0){
+ 					
+ 					this.addToQueue(uniqueId, eventObj);
+ 					
+ 					this.timer = setTimeout(function(){
+ 						 						
+ 						_this.removeFromQueue(uniqueId);
+ 						
+ 						clearTimeout(_this.timer);
+ 						
+ 					}, 8000);
+ 				}
+ 				
+ 				$rootScope.$broadcast("NOTIFY-" + event, eventObj);			
+ 			},
+ 			
+ 			/**
+ 	         * @function NotificationRelayService.addToQueue
+ 	         * @memberof NotificationsServices
+ 	         * @param {string} uniqueId - the unique id used as the key in the queue object
+ 	         * @param {object} eventObj - event object storing the id, category and data of the event
+ 	         * @author Alex Boisselle
+ 	         * @description places an event in the queue, needs rootscope apply to work
+ 	         */
+ 			addToQueue: function(uniqueId, eventObj){
+ 				var _this = this;
+
+		/*		if (!$rootScope.$$phase) { // i.e. first click after fetching from firebase
+		 			 jshint ignore:start 
+	 					$rootScope.$apply(function () {*/
+	 						_this.queue[uniqueId] = eventObj;
+	 			/*		});
+				     jshint ignore:end 
+				}*/
+ 			},
+ 			
+ 			/**
+ 	         * @function NotificationRelayService.removeFromQueue
+ 	         * @memberof NotificationsServices
+ 	         * @param {string} uniqueId - the unique id used as the key in the queue object
+ 	         * @author Alex Boisselle
+ 	         * @description removes an event from the queue, needs rootscope apply to work
+ 	         */
+ 			removeFromQueue: function(uniqueId){
+ 				var _this = this;
+
+				if (!$rootScope.$$phase) { // i.e. first click after fetching from firebase
+		 			/* jshint ignore:start */
+					    $rootScope.$apply(function () {
+					    	delete _this.queue[uniqueId];
+					    });
+				    /* jshint ignore:end */
+				}
+			},
+ 			
 			/**
-             * @function NotificationsService.broadcast
-             * @memberof NotificationsService
-             * @param  {object} details - details to provide to the notification controller to output
-             * @author Alex Boisselle
-             */
-            broadcast: function(details) {
-            	     
-            	var notificationModel = {
-            		id: details.id ? details.id : null,
-            		type: details.type ? details.type : null,
-            		driverId: details.driverId ? details.driverId : null,
-            		driverName: details.driverName ? details.driverName : "",
-            		mapCoords: details.mapCoords ? details.mapCoords : null,
-            		description: details.description ? details.description : ""
-            	};
-                
-            	
-            }
-        };
-	}]);
+ 	         * @property {object} NotificationRelayService.queue - The queue that displays notif popups
+ 	         * @memberof NotificationsServices
+ 	         * @author Alex Boisselle
+ 	         */
+ 			queue: {},
+ 			
+ 			/**
+ 	         * @property {object} NotificationRelayService.storage - Storage of all events acquired in the session
+ 	         * @memberof NotificationsServices
+ 	         * @author Alex Boisselle
+ 	         */
+ 			storage: {}
+ 		};
+ 	}]);
 })();
 /*jshint -W099*/
 /**

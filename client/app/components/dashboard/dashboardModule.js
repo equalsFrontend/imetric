@@ -24,6 +24,7 @@
 	                                    'LoginService',
 	                                    'PreloaderService',
 	                                    'DriverEventRelayService',
+	                                    'NotificationRelayService',
 	                                    'PATHS',
 	                                    'EVENTS',
 	                                    function($scope, 
@@ -31,6 +32,7 @@
 	                                    		 LoginService,
 	                                    		 PreloaderService,
 	     	                                     DriverEventRelayService,
+	     	                                     NotificationRelayService,
 	                                    		 PATHS,
 	                                    		 EVENTS){
 		
@@ -45,6 +47,8 @@
          * @memberof DashboardControllers
          */
 		$scope.data = PreloaderService.data;
+		
+		$scope.currentUser = $rootScope.currentUser;
 		
 		/**
          * @function DashboardControllers.logout 
@@ -105,7 +109,7 @@
 		
 		//accel tracked
 		accQuery.on("child_added", function(snapshot){
-			
+						
 			var event = {
 				key: snapshot.key(),
 				category: 'accelerations',
@@ -120,6 +124,8 @@
 			 * @param {object} statDriverId - driver id
 			 */
 			DriverEventRelayService.relay(EVENTS.EVENT_ACCEL_ADDED, event);
+			
+			NotificationRelayService.relay(EVENTS.EVENT_ACCEL_ADDED, event);
 		});
 		
 		//accel removed
@@ -264,7 +270,6 @@
                                     	       $rootScope,
                                     		   PATHS){
 		
-
 		var map, pointarray, heatmap;
 		
 		/**

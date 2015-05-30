@@ -15,45 +15,44 @@
 	    'iMetric.components.notifications.services'
 	])
 	
-	.controller('NotificationsViewController', ['$scope', 
-	                                            '$rootScope', 
-	                                            function($scope, 
-	                                            		 $rootScope){
-		
-		$scope.greeting = "Notification view";
-		
-		$scope.closeNotification = function(event){
-			var el = event.target,
-				container = $($($(el).parent()).parent())[0],
-				containerId = container.id;
+	//this controller is for controller the scope
+	.controller('NotificationsController', ['$scope', 
+	                                        '$rootScope', 
+	                                        'NotificationRelayService',
+	                                         function($scope, 
+	                                        		  $rootScope,
+	                                        		  NotificationRelayService){
+				
+		/*$scope.$on("NOTIFY-" + EVENTS.EVENT_ACCEL_ADDED, function(event, args){
+
 			
-			$('#' + containerId).hide("fast");
-		};
-		
-		$scope.$on('newNotification', function(){
-			console.log("View Controller: New Notification");
-		});
+			
+		});*/
 		
 	}])
 	
-	.controller('NotificationController', ['$scope', 
+	//view specific methods & properties
+	.controller('NotificationsViewController', ['$scope', 
 	                                            '$rootScope', 
+	                                            'NotificationRelayService',
 	                                            function($scope, 
-	                                            		 $rootScope){
+	                                            		 $rootScope,
+	                                            		 NotificationRelayService){
 		
-		$scope.greeting = "Notification popup";
+		$scope.storage = NotificationRelayService.storage;
 		
-		$scope.closeNotification = function(event){
-			var el = event.target,
-				container = $($($(el).parent()).parent())[0],
-				containerId = container.id;
-		
-			$('#' + containerId).hide("fast");
-		};
-		
-		$scope.$on('newNotification', function(){
-			console.log("View Controller: New Notification");
-		});
+	}])
+	
+	//popup specific methods and properties
+	.controller('NotificationPopupController', ['$scope', 
+	                                            '$rootScope', 
+	                                            'NotificationRelayService',
+	                                            function($scope, 
+	                                            		 $rootScope,
+	                                            		 NotificationRelayService){
+
+		$scope.queue = NotificationRelayService.queue;
+				
 	}]);
 	
 })();
