@@ -77,13 +77,13 @@
  			addToQueue: function(uniqueId, eventObj){
  				var _this = this;
 
-		/*		if (!$rootScope.$$phase) { // i.e. first click after fetching from firebase
-		 			 jshint ignore:start 
-	 					$rootScope.$apply(function () {*/
+				if (!$rootScope.$$phase) { // i.e. first click after fetching from firebase
+					/* jshint ignore:start */
+	 					$rootScope.$apply(function () {
 	 						_this.queue[uniqueId] = eventObj;
-	 			/*		});
-				     jshint ignore:end 
-				}*/
+	 					});
+	 					/* jshint ignore:end */
+				}
  			},
  			
  			/**
