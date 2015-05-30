@@ -29,23 +29,31 @@
 	    ]   
 	)
 		
-	.constant("PATHS",(function(){
+	.constant("CONFIG", (function(){
+		
+		return {
+			NAME: 'iMetric',
+			VERSION: '1.0.0',
+			API: 'http://blistering-heat-5543.firebaseapp.com/doc',
+			GIT: 'https://github.com/equalsFrontend/imetric.git'
+		};
+		
+	}))
+	
+	.constant("PATHS", (function(){
 		
 		var appPath = "client/app/";
 				
-		appPath = "../client/app/";
+		//appPath = "../client/app/";
 		
 		return {
 			FIREBASE : "https://blistering-heat-5543.firebaseio.com",
 			TEST : "test/",
 			CLIENT : "client/",
-			
-				APP  		 :  appPath,
-				
+				APP  	 :  appPath,
 				ASSETS 	 : "assets/",
 					IMAGES 	: "assets/img/",
 					STUB 		: "assets/stub/",
-					
 				COMPONENTS : appPath + "components/",
 					LOGIN : appPath + "components/login/",
 					DASHBOARD : appPath + "components/dashboard/",
@@ -55,6 +63,70 @@
 					PRELOADER : appPath + "components/preloader/"
 		};
 		
+	})())
+	
+	.constant("EVENTS", (function(){
+		return {
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_DRIVER_ADDED: "driver_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_DRIVER_REMOVED: "driver_removed",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_ACCEL_ADDED: "accel_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_ACCEL_REMOVED: "accel_removed",
+
+			/** 
+			 *  @constant 
+			 *  @default 
+			 */
+			EVENT_DECEL_ADDED: "decel_added",
+			
+			/** 
+			 *  @constant 
+			 *  @default 
+			 */
+			EVENT_DECEL_REMOVED: "decel_removed",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STOP_ADDED: "stop_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STOP_REMOVED: "stop_removed",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STEADY_ADDED: "steady_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STEADY_REMOVED: "steady_removed"
+		};
 	})())
 	
 	/*
@@ -162,6 +234,21 @@
         
 		$rootScope.firebase = new Firebase(PATHS.FIREBASE);
         
+		/**
+         * @function App.$onMany 
+         * @memberof App
+         * @author Alex Boisselle
+         * @param {array} events - a list of events to watch
+         * @param {function} fn - a common callback for each of them
+         * @description lets you bind to multiple event broadcasts in a clean way with a common callback fn
+         * @fires $on
+         */
+		$rootScope.$onMany = function(events, fn) {
+			for(var i = 0; i < events.length; i++) {
+				this.$on(events[i], fn);
+			}
+	    };
+		
 		$location.path('/login');
 	}])
 	
@@ -241,7 +328,34 @@
 
 	"use strict";
 	
-	var dashboardDirectives = angular.module('iMetric.components.dashboard.directives', []);
+	var dashboardDirectives = angular.module('iMetric.components.dashboard.directives', [])
+	
+	.directive('highlighter', ['$timeout', function($timeout) {
+		return {
+			restrict: 'A',
+		    scope: {
+		      model: '=highlighter'
+		    },
+		    link: function(scope, element) {
+		    	
+        		element.addClass('highlight-off');
+        		
+		    	scope.$watch('model', function (nv, ov) {
+		    	   if (nv !== ov) {
+		        		// apply class
+		        		element.removeClass('highlight-off');
+		        		element.addClass('highlight-on');
+
+		          		// auto remove after some delay
+		          		$timeout(function () {
+		        	  		element.removeClass('highlight-on');
+			        		element.addClass('highlight-off');
+		          		}, 1000);
+		        	}
+		       });
+		    }
+	    };
+	}]);
 	
 })();
 /*jshint -W099*/
@@ -259,20 +373,27 @@
 	
 	var dashboardModule = angular.module('iMetric.components.dashboard', [
 	    'iMetric.components.dashboard.directives',
-	    'iMetric.components.dashboard.services'
+	    'iMetric.components.dashboard.services',
+	    'iMetric.components.drivers.services'
 	])
+	
+	
 	
 	.controller('DashboardController', ['$scope', 
 	                                    '$rootScope',
 	                                    'LoginService',
 	                                    'PreloaderService',
+	                                    'DriverEventRelayService',
 	                                    'PATHS',
+	                                    'EVENTS',
 	                                    function($scope, 
 	                                    		 $rootScope,
 	                                    		 LoginService,
 	                                    		 PreloaderService,
-	                                    		 PATHS){
-
+	     	                                     DriverEventRelayService,
+	                                    		 PATHS,
+	                                    		 EVENTS){
+		
 		/**
          * @property {string} state - the current state of the application (NOT USED)
          * @memberof DashboardControllers
@@ -296,8 +417,206 @@
 			LoginService.logout();
 		};
 		
-	}])
+		//firebase queries
+		var driversQuery = new Firebase(PATHS.FIREBASE + '/drivers'),
+			statsQuery = new Firebase(PATHS.FIREBASE + '/stats'),
+			accQuery = new Firebase(PATHS.FIREBASE + '/stats/acceleration'),
+			decQuery = new Firebase(PATHS.FIREBASE + '/stats/braking'),
+			stopQuery = new Firebase(PATHS.FIREBASE + '/stats/stops'),
+			steadyQuery = new Firebase(PATHS.FIREBASE + '/stats/steady');
 		
+		//driver added
+		driversQuery.on("child_added", function(snapshot) {
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'drivers',
+				data: snapshot
+			};
+			
+			/**
+			 * @event DashboardControllers#driver_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} data - data snapshot from fb
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_DRIVER_ADDED, event);
+		});		
+
+		//driver removed
+		driversQuery.on("child_removed", function(snapshot) {
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'drivers',
+				data: snapshot
+			};
+			
+			/**
+			 * @event DashboardControllers#driver_removed
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} data - data snapshot from fb
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_DRIVER_REMOVED, {category: 'drivers', data: snapshot});
+		});	
+		
+		//accel tracked
+		accQuery.on("child_added", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'accelerations',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#accel_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_ACCEL_ADDED, event);
+		});
+		
+		//accel removed
+		accQuery.on("child_removed", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'accelerations',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#accel_removed
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_ACCEL_REMOVED, event);
+		});
+		
+		//brake tracked
+		decQuery.on("child_added", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'decelerations',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#decel_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_DECEL_ADDED, event);
+		});
+		
+		//brake tracked
+		decQuery.on("child_removed", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'decelerations',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#decel_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_DECEL_REMOVED, event);
+		});
+		
+		//stop tracked
+		stopQuery.on("child_added", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'stops',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#stop_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_STOP_ADDED, event);
+		});
+		
+		//stop tracked
+		stopQuery.on("child_removed", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'stops',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#stop_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_STOP_REMOVED, event);
+		});
+		
+		//steady tracked
+		steadyQuery.on("child_added", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'steadys',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#steady_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_STEADY_ADDED, event);
+		});
+		
+		//steady tracked
+		steadyQuery.on("child_removed", function(snapshot){
+			
+			var event = {
+				key: snapshot.key(),
+				category: 'steadys',
+				data: snapshot.val().driver
+			};
+			
+			/**
+			 * @event DashboardControllers#steady_added
+			 * @type {object}
+			 * @memberof DashboardControllers
+			 * @param {string} category - event category
+			 * @param {object} statDriverId - driver id
+			 */
+			DriverEventRelayService.relay(EVENTS.EVENT_STEADY_REMOVED, event);
+		});
+		
+	}])
+	
 	.controller('MapViewController', ['$scope', 
                                       '$rootScope',
                                       'PATHS',
@@ -517,6 +836,7 @@
 /**
  * Dashboard Services
  * @module /components/dashboard/gridServices
+ * @namepsace DashboardServices
  * @author Alex Boisselle
  * @date May 2015
  */
@@ -557,22 +877,20 @@
 	"use strict";
 	
 	var driversModule = angular.module('iMetric.components.drivers', [
-	    'iMetric.components.drivers.directives'
+	    'iMetric.components.drivers.directives',
+	    'iMetric.components.drivers.services'
 	])
 	
 	.controller('DriversControllers', ['$scope', 
-	                                      '$rootScope',
-	                                      'PATHS',
-	                                      function($scope, 
-	                                    		   $rootScope,
-	                                    		   PATHS){
-		
-		var drivers = new Firebase(PATHS.FIREBASE + '/drivers'),
-			stats = new Firebase(PATHS.FIREBASE + '/stats'),
-			accQuery = new Firebase(PATHS.FIREBASE + '/stats/acceleration'),
-			decQuery = new Firebase(PATHS.FIREBASE + '/stats/braking'),
-			stopQuery = new Firebase(PATHS.FIREBASE + '/stats/stops'),
-			steadyQuery = new Firebase(PATHS.FIREBASE + '/stats/steady');
+	                                   '$rootScope',
+	                                   'PATHS',
+	                                   'EVENTS',
+	                                   'DriverEventRelayService',
+	                                   function($scope, 
+	                                    		$rootScope,
+	                                    		PATHS,
+	                                    		EVENTS,
+	                                    		DriverEventRelayService){
 	
 		$scope.driverProfiles = [];
 				
@@ -633,6 +951,8 @@
 		};
 		
 		
+		//the next few functions are purely transformation functions from db to chart avaiable formats
+		
 		/**
          * @function DriversControllers.updateDriverSeries
          * @memberof DriversControllers
@@ -660,12 +980,13 @@
 		/**
          * @function DriversControllers.addDriver 
          * @memberof DriversControllers
+         * @param {string} category - event category
          * @param {object} snapshot - firebase snapshot of the driver data
          * @author Alex Boisselle
          * @description adds driver to module's scope 
          * @fires updateDriverSeries
          */
-		$scope.addDriver = function(snapshot){
+		$scope.addDriver = function(category, snapshot){
 			
 			var driverId = snapshot.key(), 
 				driverName = snapshot.val().name, 
@@ -696,13 +1017,13 @@
 		/**
          * @function DriversControllers.addDriverEvent 
          * @memberof DriversControllers
-         * @param {string} type - the type of event
+         * @param {string} category - the category of event
          * @param {string} statDriverId - the id of the driver that fired the event
          * @author Alex Boisselle
          * @description event tracked, adds it to scope
          * @fires updateDriverSeries
          */
-		$scope.addDriverEvent = function(type, statDriverId){
+		$scope.addDriverEvent = function(category, statDriverId){
 			for(var d in $scope.driverProfiles){
 				var driverProfile = $scope.driverProfiles[d];
 				
@@ -710,11 +1031,11 @@
 					if (!$scope.$$phase) { // i.e. first click after fetching from firebase
 						/* jshint ignore:start */
 						    $scope.$apply(function () {
-						    	driverProfile[type] ++;
+						    	driverProfile[category] ++;
 						    });
 					    /* jshint ignore:end */
 					} else {
-						driverProfile[type] ++;
+						driverProfile[category] ++;
 					}
 				}
 				
@@ -726,13 +1047,13 @@
 		/**
          * @function DriversControllers.removeDriverEvent 
          * @memberof DriversControllers
-         * @param {string} type - the type of event
+         * @param {string} category - the category of event
          * @param {statDriverId} statDriverId - the id of the driver that fired the event
          * @author Alex Boisselle
          * @description event removed, removes it from scope
          * @fires updateDriverSeries
          */
-		$scope.removeDriverEvent = function(type, statDriverId){
+		$scope.removeDriverEvent = function(category, statDriverId){
 			for(var d in $scope.driverProfiles){
 				var driverProfile = $scope.driverProfiles[d];
 				
@@ -740,72 +1061,78 @@
 					if (!$scope.$$phase) { // i.e. first click after fetching from firebase
 						/* jshint ignore:start */
 						    $scope.$apply(function () {
-						    	driverProfile[type] --;
+						    	driverProfile[category] --;
 						    });
 					    /* jshint ignore:end */
 					} else {
-						driverProfile[type] --;
+						driverProfile[category] --;
 					}
 				}
 				
 				$scope.updateDriverSeries();
 			}
 		};
+			
 		
+		//events fired by dashboard are heard here to build data for charts
+		/**
+		 * @listens DashboardControllers#driver_added
+		 */
+		$scope.$on(EVENTS.EVENT_DRIVER_ADDED, function(event, args){
 
+			$scope.addDriver(args.category, args.data);
+		});
 		
-		//driver added
-		drivers.on("child_added", function(snapshot) {
-			
-			$scope.addDriver(snapshot);
-		});		
+		/**
+		 * @listens DashboardControllers#driver_removed
+		 */
+		$scope.$on(EVENTS.EVENT_DRIVER_REMOVED, function(event, args){
 
-		//driver removed
-		drivers.on("child_removed", function(snapshot) {
+			$scope.removeDriver(args.category, args.data);
+		});
+		
+		/**
+		 * @listens DashboardControllers#accel_added
+		 * @listens DashboardControllers#decel_added
+		 * @listens DashboardControllers#stop_added
+		 * @listens DashboardControllers#steady_added
+		 */
+		$scope.$onMany([
+		    EVENTS.EVENT_ACCEL_ADDED,
+		    EVENTS.EVENT_DECEL_ADDED,
+		    EVENTS.EVENT_STOP_ADDED,
+		    EVENTS.EVENT_STEADY_ADDED
+		], function(event, args){
+			$scope.addDriverEvent(args.category, args.data);
+		});
+		
+		
+		/**
+		 * @listens DashboardControllers#accel_removed
+		 */
+		$scope.$onMany([
+		    EVENTS.EVENT_ACCEL_REMOVED,
+		    EVENTS.EVENT_DECEL_REMOVED,
+		    EVENTS.EVENT_STOP_REMOVED,
+		    EVENTS.EVENT_STEADY_REMOVED
+		], function(event, args){
+			$scope.removeDriverEvent(args.category, args.data);
+		});
+		
+		
+		//when the controller is initialized we must first run through the driver 
+		//event list to build the initial reports, afterwards is real time
+		for(var e in DriverEventRelayService.model){
+			var event = DriverEventRelayService.model[e];
 			
-			$scope.removeDriver(snapshot);
-		});	
+			if(event.category == "drivers"){
+				$scope.addDriver(event.category, event.data);
+			} else {
+				$scope.addDriverEvent(event.category, event.data);
+			}
+		}
 		
-		
-		//accel tracked
-		accQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-										
-			$scope.addDriverEvent('accelerations', statDriverId);
-		});
-		
-		//accel removed
-		accQuery.on("child_removed", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-										
-			$scope.removeDriverEvent('accelerations', statDriverId);
-		});
-		
-		
-		
-		//brake tracked
-		decQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-			
-			$scope.addDriverEvent('decelerations', statDriverId);
-		});
-		
-		//stop tracked
-		stopQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-			
-			$scope.addDriverEvent('stops', statDriverId);
-		});
-		
-		//steady tracked
-		steadyQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-			
-			$scope.addDriverEvent('steadys', statDriverId);
-		});
-				
 	}]);
-	
 })();
 /*jshint -W099*/
 /**
@@ -819,8 +1146,43 @@
 
 	"use strict";
 	
-	var driversServices = angular.module('Metric.components.drivers.services', []);
+	var driversServices = angular.module('iMetric.components.drivers.services', [])
 	
+	.factory('DriverEventRelayService', ['$rootScope', 
+                                function($rootScope){
+		
+		return {
+			
+			/**
+	         * @function DriverEventRelayService.relay 
+	         * @memberof DriversServices
+	         * @param {string} event - the title of the event (stored in constants)
+	         * @param {object} details - contains the key of the event, the event category and the event data
+	         * @author Alex Boisselle
+	         * @description transforms event for the controller to augment the DOM
+	         * @fires $rootScope.$broadcast()
+	         */
+			relay: function(event, details){
+				
+				console.log("driver service relay event " + event);
+				
+				var uniqueId = details.category + details.key;
+				
+				var eventObj = {
+					category: details.category,
+					data: details.data
+				};
+				
+				if(!this.model.hasOwnProperty(uniqueId)){
+					this.model[uniqueId] = eventObj;
+				}
+				
+				$rootScope.$broadcast(event, eventObj);			
+			},
+			
+			model: {}
+		};
+	}]);
 })();
 /*jshint -W099*/
 /**
@@ -960,8 +1322,14 @@
              * @returns Payload of user data
              */
             login: function(un, pw) {
-            	            	
-                var startDefer = $q.defer();
+            	                   	
+                var loginDefer = $q.defer();
+                
+                if(un == "alex"){
+                	console.log("it's me");
+                } else {
+                	console.log("it's not me");
+                }
                 
                 $rootScope.firebase.authWithPassword({
                 	email    : un,
@@ -972,11 +1340,11 @@
 
 	    				$('.btn-signin').removeClass('active');
 	            	} else {
-	                    //console.log("Authenticated successfully with payload:", authData);
+	            		return true;
 	            	}
                 });
                 	
-                return startDefer.promise;
+                return loginDefer.promise;
             },
             
             /**
@@ -1046,6 +1414,10 @@
 			$('#' + containerId).hide("fast");
 		};
 		
+		$scope.$on('newNotification', function(){
+			console.log("View Controller: New Notification");
+		});
+		
 	}])
 	
 	.controller('NotificationController', ['$scope', 
@@ -1062,6 +1434,10 @@
 		
 			$('#' + containerId).hide("fast");
 		};
+		
+		$scope.$on('newNotification', function(){
+			console.log("View Controller: New Notification");
+		});
 	}]);
 	
 })();
@@ -1069,6 +1445,7 @@
 /**
  * Notifications Services
  * @module /components/notifications/notificationsServices
+ * @namespace NotificationsService
  * @author Alex Boisselle
  * @date May 2015
  */
@@ -1077,8 +1454,34 @@
 
 	"use strict";
 	
-	var notificationsServices = angular.module('iMetric.components.notifications.services', []);
+	var notificationsServices = angular.module('iMetric.components.notifications.services', [])
 	
+	.factory('NotificationsService', ['$q', 
+	                                 '$rootScope', 
+	                                 function($q,
+	                                		  $rootScope){
+		return {
+			/**
+             * @function NotificationsService.broadcast
+             * @memberof NotificationsService
+             * @param  {object} details - details to provide to the notification controller to output
+             * @author Alex Boisselle
+             */
+            broadcast: function(details) {
+            	     
+            	var notificationModel = {
+            		id: details.id ? details.id : null,
+            		type: details.type ? details.type : null,
+            		driverId: details.driverId ? details.driverId : null,
+            		driverName: details.driverName ? details.driverName : "",
+            		mapCoords: details.mapCoords ? details.mapCoords : null,
+            		description: details.description ? details.description : ""
+            	};
+                
+            	
+            }
+        };
+	}]);
 })();
 /*jshint -W099*/
 /**

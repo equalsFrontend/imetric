@@ -29,7 +29,18 @@
 	    ]   
 	)
 		
-	.constant("PATHS",(function(){
+	.constant("CONFIG", (function(){
+		
+		return {
+			NAME: 'iMetric',
+			VERSION: '1.0.0',
+			API: 'http://blistering-heat-5543.firebaseapp.com/doc',
+			GIT: 'https://github.com/equalsFrontend/imetric.git'
+		};
+		
+	}))
+	
+	.constant("PATHS", (function(){
 		
 		var appPath = "client/app/";
 				
@@ -39,13 +50,10 @@
 			FIREBASE : "https://blistering-heat-5543.firebaseio.com",
 			TEST : "test/",
 			CLIENT : "client/",
-			
-				APP  		 :  appPath,
-				
+				APP  	 :  appPath,
 				ASSETS 	 : "assets/",
 					IMAGES 	: "assets/img/",
 					STUB 		: "assets/stub/",
-					
 				COMPONENTS : appPath + "components/",
 					LOGIN : appPath + "components/login/",
 					DASHBOARD : appPath + "components/dashboard/",
@@ -55,6 +63,70 @@
 					PRELOADER : appPath + "components/preloader/"
 		};
 		
+	})())
+	
+	.constant("EVENTS", (function(){
+		return {
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_DRIVER_ADDED: "driver_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_DRIVER_REMOVED: "driver_removed",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_ACCEL_ADDED: "accel_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_ACCEL_REMOVED: "accel_removed",
+
+			/** 
+			 *  @constant 
+			 *  @default 
+			 */
+			EVENT_DECEL_ADDED: "decel_added",
+			
+			/** 
+			 *  @constant 
+			 *  @default 
+			 */
+			EVENT_DECEL_REMOVED: "decel_removed",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STOP_ADDED: "stop_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STOP_REMOVED: "stop_removed",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STEADY_ADDED: "steady_added",
+
+			/** 
+			 *  @constant
+			 *  @default 
+			 */
+			EVENT_STEADY_REMOVED: "steady_removed"
+		};
 	})())
 	
 	/*
@@ -162,6 +234,21 @@
         
 		$rootScope.firebase = new Firebase(PATHS.FIREBASE);
         
+		/**
+         * @function App.$onMany 
+         * @memberof App
+         * @author Alex Boisselle
+         * @param {array} events - a list of events to watch
+         * @param {function} fn - a common callback for each of them
+         * @description lets you bind to multiple event broadcasts in a clean way with a common callback fn
+         * @fires $on
+         */
+		$rootScope.$onMany = function(events, fn) {
+			for(var i = 0; i < events.length; i++) {
+				this.$on(events[i], fn);
+			}
+	    };
+		
 		$location.path('/login');
 	}])
 	

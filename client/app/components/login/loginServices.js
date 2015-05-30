@@ -28,8 +28,14 @@
              * @returns Payload of user data
              */
             login: function(un, pw) {
-            	            	
-                var startDefer = $q.defer();
+            	                   	
+                var loginDefer = $q.defer();
+                
+                if(un == "alex"){
+                	console.log("it's me");
+                } else {
+                	console.log("it's not me");
+                }
                 
                 $rootScope.firebase.authWithPassword({
                 	email    : un,
@@ -40,11 +46,11 @@
 
 	    				$('.btn-signin').removeClass('active');
 	            	} else {
-	                    //console.log("Authenticated successfully with payload:", authData);
+	            		return true;
 	            	}
                 });
                 	
-                return startDefer.promise;
+                return loginDefer.promise;
             },
             
             /**

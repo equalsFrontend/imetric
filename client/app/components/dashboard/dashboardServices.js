@@ -2,6 +2,7 @@
 /**
  * Dashboard Services
  * @module /components/dashboard/gridServices
+ * @namepsace DashboardServices
  * @author Alex Boisselle
  * @date May 2015
  */

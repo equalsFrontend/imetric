@@ -12,22 +12,20 @@
 	"use strict";
 	
 	var driversModule = angular.module('iMetric.components.drivers', [
-	    'iMetric.components.drivers.directives'
+	    'iMetric.components.drivers.directives',
+	    'iMetric.components.drivers.services'
 	])
 	
 	.controller('DriversControllers', ['$scope', 
-	                                      '$rootScope',
-	                                      'PATHS',
-	                                      function($scope, 
-	                                    		   $rootScope,
-	                                    		   PATHS){
-		
-		var drivers = new Firebase(PATHS.FIREBASE + '/drivers'),
-			stats = new Firebase(PATHS.FIREBASE + '/stats'),
-			accQuery = new Firebase(PATHS.FIREBASE + '/stats/acceleration'),
-			decQuery = new Firebase(PATHS.FIREBASE + '/stats/braking'),
-			stopQuery = new Firebase(PATHS.FIREBASE + '/stats/stops'),
-			steadyQuery = new Firebase(PATHS.FIREBASE + '/stats/steady');
+	                                   '$rootScope',
+	                                   'PATHS',
+	                                   'EVENTS',
+	                                   'DriverEventRelayService',
+	                                   function($scope, 
+	                                    		$rootScope,
+	                                    		PATHS,
+	                                    		EVENTS,
+	                                    		DriverEventRelayService){
 	
 		$scope.driverProfiles = [];
 				
@@ -88,6 +86,8 @@
 		};
 		
 		
+		//the next few functions are purely transformation functions from db to chart avaiable formats
+		
 		/**
          * @function DriversControllers.updateDriverSeries
          * @memberof DriversControllers
@@ -115,12 +115,13 @@
 		/**
          * @function DriversControllers.addDriver 
          * @memberof DriversControllers
+         * @param {string} category - event category
          * @param {object} snapshot - firebase snapshot of the driver data
          * @author Alex Boisselle
          * @description adds driver to module's scope 
          * @fires updateDriverSeries
          */
-		$scope.addDriver = function(snapshot){
+		$scope.addDriver = function(category, snapshot){
 			
 			var driverId = snapshot.key(), 
 				driverName = snapshot.val().name, 
@@ -151,13 +152,13 @@
 		/**
          * @function DriversControllers.addDriverEvent 
          * @memberof DriversControllers
-         * @param {string} type - the type of event
+         * @param {string} category - the category of event
          * @param {string} statDriverId - the id of the driver that fired the event
          * @author Alex Boisselle
          * @description event tracked, adds it to scope
          * @fires updateDriverSeries
          */
-		$scope.addDriverEvent = function(type, statDriverId){
+		$scope.addDriverEvent = function(category, statDriverId){
 			for(var d in $scope.driverProfiles){
 				var driverProfile = $scope.driverProfiles[d];
 				
@@ -165,11 +166,11 @@
 					if (!$scope.$$phase) { // i.e. first click after fetching from firebase
 						/* jshint ignore:start */
 						    $scope.$apply(function () {
-						    	driverProfile[type] ++;
+						    	driverProfile[category] ++;
 						    });
 					    /* jshint ignore:end */
 					} else {
-						driverProfile[type] ++;
+						driverProfile[category] ++;
 					}
 				}
 				
@@ -181,13 +182,13 @@
 		/**
          * @function DriversControllers.removeDriverEvent 
          * @memberof DriversControllers
-         * @param {string} type - the type of event
+         * @param {string} category - the category of event
          * @param {statDriverId} statDriverId - the id of the driver that fired the event
          * @author Alex Boisselle
          * @description event removed, removes it from scope
          * @fires updateDriverSeries
          */
-		$scope.removeDriverEvent = function(type, statDriverId){
+		$scope.removeDriverEvent = function(category, statDriverId){
 			for(var d in $scope.driverProfiles){
 				var driverProfile = $scope.driverProfiles[d];
 				
@@ -195,70 +196,76 @@
 					if (!$scope.$$phase) { // i.e. first click after fetching from firebase
 						/* jshint ignore:start */
 						    $scope.$apply(function () {
-						    	driverProfile[type] --;
+						    	driverProfile[category] --;
 						    });
 					    /* jshint ignore:end */
 					} else {
-						driverProfile[type] --;
+						driverProfile[category] --;
 					}
 				}
 				
 				$scope.updateDriverSeries();
 			}
 		};
+			
 		
+		//events fired by dashboard are heard here to build data for charts
+		/**
+		 * @listens DashboardControllers#driver_added
+		 */
+		$scope.$on(EVENTS.EVENT_DRIVER_ADDED, function(event, args){
 
+			$scope.addDriver(args.category, args.data);
+		});
 		
-		//driver added
-		drivers.on("child_added", function(snapshot) {
-			
-			$scope.addDriver(snapshot);
-		});		
+		/**
+		 * @listens DashboardControllers#driver_removed
+		 */
+		$scope.$on(EVENTS.EVENT_DRIVER_REMOVED, function(event, args){
 
-		//driver removed
-		drivers.on("child_removed", function(snapshot) {
+			$scope.removeDriver(args.category, args.data);
+		});
+		
+		/**
+		 * @listens DashboardControllers#accel_added
+		 * @listens DashboardControllers#decel_added
+		 * @listens DashboardControllers#stop_added
+		 * @listens DashboardControllers#steady_added
+		 */
+		$scope.$onMany([
+		    EVENTS.EVENT_ACCEL_ADDED,
+		    EVENTS.EVENT_DECEL_ADDED,
+		    EVENTS.EVENT_STOP_ADDED,
+		    EVENTS.EVENT_STEADY_ADDED
+		], function(event, args){
+			$scope.addDriverEvent(args.category, args.data);
+		});
+		
+		
+		/**
+		 * @listens DashboardControllers#accel_removed
+		 */
+		$scope.$onMany([
+		    EVENTS.EVENT_ACCEL_REMOVED,
+		    EVENTS.EVENT_DECEL_REMOVED,
+		    EVENTS.EVENT_STOP_REMOVED,
+		    EVENTS.EVENT_STEADY_REMOVED
+		], function(event, args){
+			$scope.removeDriverEvent(args.category, args.data);
+		});
+		
+		
+		//when the controller is initialized we must first run through the driver 
+		//event list to build the initial reports, afterwards is real time
+		for(var e in DriverEventRelayService.model){
+			var event = DriverEventRelayService.model[e];
 			
-			$scope.removeDriver(snapshot);
-		});	
+			if(event.category == "drivers"){
+				$scope.addDriver(event.category, event.data);
+			} else {
+				$scope.addDriverEvent(event.category, event.data);
+			}
+		}
 		
-		
-		//accel tracked
-		accQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-										
-			$scope.addDriverEvent('accelerations', statDriverId);
-		});
-		
-		//accel removed
-		accQuery.on("child_removed", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-										
-			$scope.removeDriverEvent('accelerations', statDriverId);
-		});
-		
-		
-		
-		//brake tracked
-		decQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-			
-			$scope.addDriverEvent('decelerations', statDriverId);
-		});
-		
-		//stop tracked
-		stopQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-			
-			$scope.addDriverEvent('stops', statDriverId);
-		});
-		
-		//steady tracked
-		steadyQuery.on("child_added", function(_snapshot){
-			var statDriverId = _snapshot.val().driver;
-			
-			$scope.addDriverEvent('steadys', statDriverId);
-		});
-				
 	}]);
-	
 })();

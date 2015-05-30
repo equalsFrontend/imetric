@@ -332,9 +332,9 @@ body, html {
   transition: opacity 0.25s, width 0.25s;
   
    display: inline-block;
+  -webkit-animation: spin 2s infinite linear;
   -moz-animation: spin 2s infinite linear;
   -o-animation: spin 2s infinite linear;
-  -webkit-animation: spin 2s infinite linear;
   animation: spin 2s infinite linear;
 }
 
@@ -472,6 +472,8 @@ nav .btn-default, nav .active {
 	margin-left: 0.5%;
 	width: 99%;
 	position: relative;
+	display: block;
+	overflow: hidden;
 }
 
 .notification p {
@@ -491,6 +493,21 @@ nav .btn-default, nav .active {
   right: 5px;
 }
 
+.highlight-off {
+  -webkit-transition: background-color 0.5s ease-in-out;
+  -moz-transition: background-color 0.5s ease-in-out;
+  -o-transition: background-color 0.5s ease-in-out;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.highlight-on {
+	background-color: #fff38f;
+	
+  -webkit-transition: background-color 0.5s ease-in-out;
+  -moz-transition: background-color 0.5s ease-in-out;
+  -o-transition: background-color 0.5s ease-in-out;
+  transition: background-color 0.5s ease-in-out;
+}
 
 @media (max-width: 700px) {
 	#main-nav a {

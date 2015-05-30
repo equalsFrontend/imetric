@@ -30,6 +30,10 @@
 			$('#' + containerId).hide("fast");
 		};
 		
+		$scope.$on('newNotification', function(){
+			console.log("View Controller: New Notification");
+		});
+		
 	}])
 	
 	.controller('NotificationController', ['$scope', 
@@ -46,6 +50,10 @@
 		
 			$('#' + containerId).hide("fast");
 		};
+		
+		$scope.$on('newNotification', function(){
+			console.log("View Controller: New Notification");
+		});
 	}]);
 	
 })();
