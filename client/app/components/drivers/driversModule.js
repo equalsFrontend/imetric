@@ -29,6 +29,12 @@
 	
 		$scope.driverProfiles = [];
 				
+		var width = window.innerWidth * 0.8;
+		
+		if(width > 1000){
+			width = 1000;
+		}
+		
 		/**
          * @property {object} driverChartConfig - stores the config options for the driver panel chart
          * @memberof DriversControllers
@@ -78,7 +84,7 @@
 			useHighStocks: false,
 	  
 			size: {
-				width: window.innerWidth * 0.8,
+				width: width,
 				height: 300
 			},
 	  
@@ -257,6 +263,22 @@
 			$scope.removeDriverEvent(args.category, args.data);
 		});
 		
+		
+		$scope.driverClickHandler = function(event){
+			var el = event.currentTarget;
+			
+			if($($(el).parent()).hasClass('active')){
+				$($(el).parent()).removeClass('active');
+			} else {
+				$($(el).parent()).addClass('active');
+			}
+		};
+		
+		$scope.driverSwipeUpHandler = function(event){
+			var el = event.currentTarget;
+			
+			$($($(el).parent()).parent()).removeClass('active');
+		};
 		
 		//when the controller is initialized we must first run through the driver 
 		//event list to build the initial reports, afterwards is real time

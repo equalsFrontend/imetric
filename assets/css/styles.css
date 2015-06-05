@@ -1,11 +1,11 @@
 /************************ FONT ************************/
 @font-face{
 	font-family:'HelveticaNeue';
-	src: url('../font/HelveticaNeue/HelveticaNeue.eot');
-	src: url('../font/HelveticaNeue/HelveticaNeue.eot?#iefix') format('embedded-opentype'),
-		url('../font/HelveticaNeue/HelveticaNeue.woff') format('woff'),
-		url('../font/HelveticaNeue/HelveticaNeue.ttf') format('truetype'),
-		url('../font/HelveticaNeue/HelveticaNeue.svg#HelveticaNeue') format('svg');
+	src: url('../fonts/HelveticaNeue/HelveticaNeue.eot');
+	src: url('../fonts/HelveticaNeue/HelveticaNeue.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/HelveticaNeue/HelveticaNeue.woff') format('woff'),
+		url('../fonts/HelveticaNeue/HelveticaNeue.ttf') format('truetype'),
+		url('../fonts/HelveticaNeue/HelveticaNeue.svg#HelveticaNeue') format('svg');
 	font-weight: normal;
 	font-style: normal;
 	font-stretch: normal;
@@ -14,11 +14,11 @@
 
 @font-face{
 	font-family:'HelveticaNeueBdCn';
-	src: url('../font/HelveticaNeueBdCn/HelveticaNeueBdCn.eot');
-	src: url('../font/HelveticaNeueBdCn/HelveticaNeueBdCn.eot?#iefix') format('embedded-opentype'),
-		url('../font/HelveticaNeueBdCn/HelveticaNeueBdCn.woff') format('woff'),
-		url('../font/HelveticaNeueBdCn/HelveticaNeueBdCn.ttf') format('truetype'),
-		url('../font/HelveticaNeueBdCn/HelveticaNeueBdCn.svg#HelveticaNeueBdCn') format('svg');
+	src: url('../fonts/HelveticaNeueBdCn/HelveticaNeueBdCn.eot');
+	src: url('../fonts/HelveticaNeueBdCn/HelveticaNeueBdCn.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/HelveticaNeueBdCn/HelveticaNeueBdCn.woff') format('woff'),
+		url('../fonts/HelveticaNeueBdCn/HelveticaNeueBdCn.ttf') format('truetype'),
+		url('../fonts/HelveticaNeueBdCn/HelveticaNeueBdCn.svg#HelveticaNeueBdCn') format('svg');
 	font-weight: normal;
 	font-style: normal;
 	font-stretch: normal;
@@ -40,11 +40,50 @@
 
 @font-face{
 	font-family:'HelveticaNeueThCn';
-	src: url('../font/HelveticaNeueThCn/HelveticaNeueThCn.eot');
-	src: url('../font/HelveticaNeueThCn/HelveticaNeueThCn.eot?#iefix') format('embedded-opentype'),
-		url('../font/HelveticaNeueThCn/HelveticaNeueThCn.woff') format('woff'),
-		url('../font/HelveticaNeueThCn/HelveticaNeueThCn.ttf') format('truetype'),
-		url('../font/HelveticaNeueThCn/HelveticaNeueThCn.svg#HelveticaNeueThCn') format('svg');
+	src: url('../fonts/HelveticaNeueThCn/HelveticaNeueThCn.eot');
+	src: url('../fonts/HelveticaNeueThCn/HelveticaNeueThCn.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/HelveticaNeueThCn/HelveticaNeueThCn.woff') format('woff'),
+		url('../fonts/HelveticaNeueThCn/HelveticaNeueThCn.ttf') format('truetype'),
+		url('../fonts/HelveticaNeueThCn/HelveticaNeueThCn.svg#HelveticaNeueThCn') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face{
+	font-family:'HelveticaNeueLTBlkCon';
+	src: url('../fonts/HelveticaNeueLTBlkCon/helveticaneuelt-blackcond-webfont.eot');
+	src: url('../fonts/HelveticaNeueLTBlkCon/helveticaneuelt-blackcond-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/HelveticaNeueLTBlkCon/helveticaneuelt-blackcond-webfont.woff') format('woff'),
+		url('../fonts/HelveticaNeueLTBlkCon/helveticaneuelt-blackcond-webfont.ttf') format('truetype'),
+		url('../fonts/HelveticaNeueLTBlkCon/helveticaneuelt-blackcond-webfont.svg#helveticaneuelt-blackcond-webfont') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face{
+	font-family:'HelveticaNeueLTCon';
+	src: url('../fonts/HelveticaNeueLTCon/helveticaneuelt-condensed-webfont.eot');
+	src: url('../fonts/HelveticaNeueLTCon/helveticaneuelt-condensed-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/HelveticaNeueLTCon/helveticaneuelt-condensed-webfont.woff') format('woff'),
+		url('../fonts/HelveticaNeueLTCon/helveticaneuelt-condensed-webfont.ttf') format('truetype'),
+		url('../fonts/HelveticaNeueLTCon/helveticaneuelt-condensed-webfont.svg#helveticaneuelt-condensed-webfont') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-stretch: normal;
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face{
+	font-family:'HelveticaNeueLTMed';
+	src: url('../fonts/HelveticaNeueLTMed/helveticaneuelt-mediumcond-webfont.eot');
+	src: url('../fonts/HelveticaNeueLTMed/helveticaneuelt-mediumcond-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/HelveticaNeueLTMed/helveticaneuelt-mediumcond-webfont.woff') format('woff'),
+		url('../fonts/HelveticaNeueLTMed/helveticaneuelt-mediumcond-webfont.ttf') format('truetype'),
+		url('../fonts/HelveticaNeueLTMed/helveticaneuelt-mediumcond-webfont.svg#helveticaneuelt-mediumcond-webfont') format('svg');
 	font-weight: normal;
 	font-style: normal;
 	font-stretch: normal;
@@ -233,8 +272,14 @@ body, html {
     float: right;
 }
 
-#driversChart {
+#drivers-chart {
 	margin-bottom: 20px;
+	max-width: 1000px;
+	margin: auto;
+}
+
+.highcharts-container {
+	max-width: 1000px;
 }
 
 .map-description {
@@ -255,6 +300,7 @@ body, html {
 .notifications-data-view-container {
 	  padding-top: 80px;
 }
+
 .highcharts-container {
 	margin: auto;	
 }
@@ -522,6 +568,225 @@ nav .btn-default, nav .active {
   -moz-transition: background-color 0.5s ease-in-out;
   -o-transition: background-color 0.5s ease-in-out;
   transition: background-color 0.5s ease-in-out;
+}
+
+
+
+
+.drivers-panel {
+	width: 80%;
+	margin: auto;
+	max-width: 1000px;
+	min-width: 380px;
+}
+
+.driver {
+	width: 45%;
+	float: left;
+	margin: 2.5%;
+	min-width: 380px;
+	position: relative;
+	overflow: hidden;
+	min-height: 93px;
+}
+
+.driver-plaque { 
+	background: #fafafa;
+	border-radius: 5px;
+	position: absolute;
+	top:0px;
+	left: 0px;
+	height: 86px;
+	width: 100%;
+	cursor: pointer;
+	
+	-webkit-box-shadow: 0px 4px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0) inset; 
+	-moz-box-shadow: 0px 4px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0) inset; 
+	-o-box-shadow: 0px 4px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0) inset; 
+	box-shadow: 0px 4px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0) inset; 
+	
+	-webkit-transition: all 0.15s ease-in;
+	-moz-transition: all 0.15s ease-in;
+	-o-transition: all 0.15s ease-in;
+	transition: all 0.15s ease-in;
+}
+
+.driver-plaque:hover {
+	top: 2px;
+	
+	-webkit-box-shadow: 0px 2px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0.4) inset; 
+	-moz-box-shadow: 0px 2px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0.4) inset; 
+	-o-box-shadow: 0px 2px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0.4) inset; 
+	box-shadow: 0px 2px 0px rgba(0,0,0,0.2), 0px 0px 30px rgba(0,0,0,0.4) inset; 
+}
+
+.driver-plaque-avatar {
+	width: 50px;
+	position: absolute;
+	top: 17px;
+	left: 17px;
+}
+
+.driver-plaque-details {
+	position: absolute;
+	left: 87px;
+	top: 15px;
+}
+
+.driver-plaque-grade {
+	position: absolute;
+	right: 0px;
+	top: 5px;
+}
+
+.driver-plaque-details-name {
+	font-family: HelveticaNeueLTCon;
+	font-size: 21px;
+	color: #3b3b3b;
+	line-height: 27px;
+	margin: 0px;
+}
+
+.driver-plaque-details-location-vehicle {
+	font-family: HelveticaNeueLTCon;
+	font-size: 12px;
+	line-height: 14px;
+	color: #8d8d8d;
+	text-transform: uppercase;
+}
+
+.driver-plaque-grade-imetric {
+	text-align: right;
+	font-family: HelveticaNeueLTCon;
+	line-height: 13px;
+	position: absolute;
+	top: 7px;
+	right: 13px;
+	width: 60px;
+	color: #838587;
+}
+
+.driver-plaque-grade-letter {
+	font-family: HelveticaNeueLTBlkCon;
+	font-size: 35px;
+	color: #17ae08;
+	position: absolute;
+	right: 16px;
+	top: 30px;
+}
+
+.driver-details {
+	margin: 4px 4px 0px 4px;
+	border-radius: 5px;
+  	padding: 0px 0px 39px 16px;
+ 	background: #f1f1f1;
+ 	height: 0px;
+ 	overflow: hidden;
+ 	 	
+	-webkit-transition: all 0.2s ease-in;
+	-moz-transition: all 0.2s ease-in;
+	-o-transition: all 0.2s ease-in;
+	transition: all 0.2s ease-in;
+	
+	-webkit-box-shadow: 0px 3px 2px rgba(0,0,0,0.4), 0px 0px 140px rgba(0,0,0,0.3) inset;
+	-moz-box-shadow: 0px 3px 2px rgba(0,0,0,0.4), 0px 0px 140px rgba(0,0,0,0.3) inset;
+	-o-box-shadow: 0px 3px 2px rgba(0,0,0,0.4), 0px 0px 140px rgba(0,0,0,0.3) inset;
+	box-shadow: 0px 3px 2px rgba(0,0,0,0.4), 0px 0px 140px rgba(0,0,0,0.3) inset;
+}
+
+.driver.active .driver-details {
+  	padding: 30px 0px 39px 16px;
+	margin: 80px 4px 0px 4px;
+ 	height: 370px;
+}
+
+.driver-details-block {
+	width: 47%;
+	height: 50%;
+	float: left;
+	
+	opacity: 0;
+	-webkit-transition: opacity 0.2s ease-in;
+	-moz-transition: all 0.2s ease-in;
+	-o-transition: all 0.2s ease-in;
+	transition: all 0.2s ease-in;
+}
+
+.driver.active .driver-details-block {
+	opacity: 1;
+}
+
+.driver-details-block-1 {
+	border-right: 1px solid #d2d2d2;
+	border-bottom: 1px solid #d2d2d2;
+}
+
+.driver-details-block-2 {
+	border-left: 1px solid #fff;
+	border-bottom: 1px solid #d2d2d2;
+}
+
+.driver-details-block-3 {
+	border-top: 1px solid #fff;
+	border-right: 1px solid #d2d2d2;
+}
+
+.driver-details-block-4 {
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.driver-details-block-title {
+	text-align: center;
+	color: #666666;
+	font-family: HelveticaNeueLTCon;
+	font-size: 16px;
+	text-transform: uppercase;
+}
+
+.driver-details-block-number {
+	font-size: 42px;
+	font-family: HelveticaNeueLTBlkCon;
+	color: #fff;
+	background-color: #428bca;
+	border-radius: 50px;
+	width: 77px;
+	height: 77px;
+	text-align: center;
+	padding-top: 7px;
+	margin: 21px 0px 14px 27%;
+	
+	-webkit-text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+	-moz-text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+	-o-text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+	text-shadow: 4px 3px 0px rgba(0,0,0,0.5);
+	
+	-webkit-box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+	-moz-box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+	-o-box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+	box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+}
+
+.driver-swipe {
+	position: absolute;
+	bottom: 5px;
+	width: 90%;
+	text-align: center;
+	text-transform: uppercase;
+	color: #b3b3b3;
+	font-family: HelveticaNeueLTCon;
+	font-size: 17px;
+	cursor: pointer;
+	
+	opacity: 0;
+	-webkit-transition: opacity 0.2s ease-in;
+	-moz-transition: all 0.2s ease-in;
+	-o-transition: all 0.2s ease-in;
+	transition: all 0.2s ease-in;
+}
+
+.driver.active .driver-swipe {
+	opacity: 1;
 }
 
 @media (max-width: 700px) {

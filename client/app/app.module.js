@@ -21,6 +21,7 @@
 			'ui.router',
 			'ngAnimate',
 			'highcharts-ng',
+		 	'swipe',
 		 	'iMetric.components.login',
 		 	'iMetric.components.preloader',
 		 	'iMetric.components.dashboard',

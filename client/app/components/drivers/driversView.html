@@ -1,45 +1,45 @@
 <div ng-controller="DriversControllers" class="data-view drivers-data-view-container">
-	<highchart id="driversChart" config="driverChartConfig"></highchart>
+	<highchart id="drivers-chart" config="driverChartConfig"></highchart>
+	
 	
 	<div class="drivers-panel">
+	
+		<h2>Drivers</h2>
+	
 		<div class="driver" ng-repeat="driver in driverProfiles">
-			<div class="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
-		    	 <div class="well profile">
-		            <div class="col-sm-12">
-		                <div class="col-xs-12 col-sm-8">
-		                    <h2>{{driver.name}}</h2>
-		                    <p><strong>Location: </strong> {{driver.location}} </p>
-		                    <p><strong>Vehicle: </strong> {{driver.vehicle}} </p>
-		                    <p><strong>Grade: </strong> {{driver.grade}} </p>
-		                    
-		                </div>             
-		                <div class="col-xs-12 col-sm-4 text-center">
-		                    <figure>
-		                        <img src="http://www.localcrimenews.com/wp-content/uploads/2013/07/default-user-icon-profile.png" alt="" class="img-circle img-responsive">
-		                        <figcaption class="ratings">
-		                        </figcaption>
-		                    </figure>
-		                </div>
-		            </div>            
-		            <div class="col-xs-12 divider text-center">
-		                <div class="col-xs-12 col-sm-3 emphasis" highlighter="driver.accelerations">
-		                    <h2><strong> {{driver.accelerations}} </strong></h2>                    
-		                    <p><small>Accelerations</small></p>
-		                </div>
-		                <div class="col-xs-12 col-sm-3 emphasis" highlighter="driver.decelerations">
-		                    <h2><strong>{{driver.decelerations}}</strong></h2>                    
-		                    <p><small>Decelerations</small></p>
-		                </div>
-		                <div class="col-xs-12 col-sm-3 emphasis" highlighter="driver.stops">
-		                    <h2><strong>{{driver.stops}}</strong></h2>                    
-		                    <p><small>Stops</small></p>
-		                </div>
-		                <div class="col-xs-12 col-sm-3 emphasis" highlighter="driver.steadys">
-		                    <h2><strong>{{driver.steadys}}</strong></h2>                    
-		                    <p><small>Steadys</small></p>
-		                </div>
-		            </div>
-		    	 </div>                 
+		
+			<div class="driver-plaque" id="{{driver.id}}" ng-click="driverClickHandler($event)">
+				<div class="driver-plaque-avatar">
+					<img src="assets/img/user.png" />
+				</div>
+				<div class="driver-plaque-details">
+					<p class="driver-plaque-details-name">{{driver.name}}</p>
+					<p class="driver-plaque-details-location-vehicle">{{driver.location}}</br>{{driver.vehicle}}</p>
+				</div>
+				<div class="driver-plaque-grade">
+					<p class="driver-plaque-grade-imetric">I-METRIC<br/>GRADE</p>
+					<p class="driver-plaque-grade-letter">{{driver.grade}}</p>
+				</div>
+			</div>
+			<div class="driver-details">
+				<div class="driver-details-block driver-details-block-1">
+					<div class="driver-details-block-number">{{driver.accelerations}}</div>
+					<p class="driver-details-block-title">Accelerations</p>
+				</div>
+				<div class="driver-details-block driver-details-block-2">
+					<div class="driver-details-block-number">{{driver.decelerations}}</div>
+					<p class="driver-details-block-title">Decelerations</p>
+				</div>
+				<div class="driver-details-block driver-details-block-3">
+					<div class="driver-details-block-number">{{driver.stops}}</div>
+					<p class="driver-details-block-title">Stops</p>
+				</div>
+				<div class="driver-details-block driver-details-block-4">
+					<div class="driver-details-block-number">{{driver.steadys}}</div>
+					<p class="driver-details-block-title">Steadys</p>
+				</div>
+				
+				<div class="driver-swipe" id="{{driver.id}}-swipe" ng-swipe-up="driverSwipeUpHandler($event)">Swipe up to close</div>
 			</div>
 		</div>
 	</div>
