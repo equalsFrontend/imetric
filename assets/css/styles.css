@@ -581,10 +581,9 @@ nav .btn-default, nav .active {
 }
 
 .drivers-panel h2 {
-	width: 80%;
-	margin: auto;
-	max-width: 1000px;
-	min-width: 380px;
+	color: #fff;
+	font-family: HelveticaNeueLTCon;
+	text-transform: uppercase;
 }
 
 .driver {
