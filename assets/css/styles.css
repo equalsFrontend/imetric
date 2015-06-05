@@ -580,6 +580,13 @@ nav .btn-default, nav .active {
 	min-width: 380px;
 }
 
+.drivers-panel h2 {
+	width: 80%;
+	margin: auto;
+	max-width: 1000px;
+	min-width: 380px;
+}
+
 .driver {
 	width: 45%;
 	float: left;
